@@ -1,0 +1,22 @@
+﻿<Window x:Class="WpfApp3.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp3"
+        xmlns:WpfApp3="clr-namespace:WpfApp3"
+        xmlns:Items="clr-namespace:WpfApp3.Items"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="400" Width="800">
+    <Grid>
+        <ComboBox x:Name="CB_ProjectName" HorizontalAlignment="Left" Margin="24,61,0,0" VerticalAlignment="Top" Width="120"/>
+        <ListBox x:Name="LB1" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,234,0,0" Height="150"/>
+        <TextBox x:Name="TBName" HorizontalAlignment="Left" Margin="290,15,0,0" TextWrapping="Wrap" Text="Please input your name and click the button." VerticalAlignment="Top" Width="180"/>
+        <Button x:Name="BT_Onay" Content="Onay" Click="Onay_Click" HorizontalAlignment="Left" Margin="222,22,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="CB_Type" HorizontalAlignment="Left" Margin="199,61,0,0" VerticalAlignment="Top" Width="120"/>
+        <Button x:Name="BT_Start" Content="Start" HorizontalAlignment="Center" Margin="0,62,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="BT_Submit" Content="Submit" HorizontalAlignment="Left" Margin="734,192,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="CB_SelectName" HorizontalAlignment="Left" Margin="548,72,0,0" VerticalAlignment="Top" Width="120"/>
+        <ComboBox x:Name="CB_Names" SelectionChanged="CBNamesSelectionChanged" HorizontalAlignment="Left" Margin="24,16,0,0" VerticalAlignment="Top" Width="120"/>
+    </Grid>
+</Window>
