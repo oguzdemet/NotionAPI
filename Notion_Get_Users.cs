@@ -10,6 +10,7 @@ using System.Collections.Generic;
 
 namespace WpfApp3
 {
+    
     public class Person
     {
         public string id { get; set; }
@@ -17,28 +18,39 @@ namespace WpfApp3
     }
     public class Notion_API
     {
-        public static Dictionary<string, string> GetUsers()
+        public static Dictionary<string, string> GetUsers(string API_Username, string Notion_GetUsers_EndPoint, string Notion_Token, string Notion_Version)
         {
-            var options = new RestClientOptions($"https://api.notion.com/v1/users")
+            var options = new RestClientOptions(Notion_GetUsers_EndPoint)
             {
                 ThrowOnAnyError = true,
-                Timeout = 100000
+                MaxTimeout = 100000
             };
             var client = new RestClient(options);
 
             var request = new RestRequest();
 
-
-            request.AddHeader("Notion-Version", "2022-02-22");
-            //request.AddHeader("Content-Type", "application/json");
-            request.AddHeader("Authorization", $"Bearer secret_fUOlP7ITMCklnmcgUsiif2y8hgEMzfClguJpFLVJBZk");
+            request.AddHeader("Notion-Version", Notion_Version);
+            request.AddHeader("Authorization", Notion_Token);
 
             RestResponse? response = client.Get(request);
+
+            if (!response.IsSuccessful)
+            {
+                throw new Exception("Request unsuccesfull!");
+            }
+            else if (string.IsNullOrEmpty(response.Content))
+            {
+                throw new Exception("Response body is null!");
+            }
 
             string jsonstring = JsonConvert.SerializeObject(response.Content);
 
             JObject Jobj = JObject.Parse(response.Content);
 
+            if (!Jobj.ContainsKey("results"))
+            {
+                throw new Exception("Response body does not contain results key!");
+            }
             JArray JArr = JArray.Parse(Jobj["results"].ToString());
 
             //MessageBox.Show(string.Join(" : ", JArr.Values("name")));
@@ -53,9 +65,8 @@ namespace WpfApp3
 
             var dictionary = JsonConvert.DeserializeObject<IEnumerable<Person>>(Jobj["results"].ToString()).
                              Select(p => (Name: p.name, Record: p.id)).
-                             Where(x => x.Name != "API_Test").
+                             Where(x => x.Name != API_Username).
                              ToDictionary(t => t.Name, t => t.Record);
-
 
             foreach (var person in dictionary)
             {

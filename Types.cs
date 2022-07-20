@@ -8,6 +8,6 @@ namespace WpfApp3
 {
     public class Types
     {
-        public static string[] Types_Array = new string[] { "Gelistirme", "ARCK-01", "CIMT-01", "Rukneddin" };
+        
     }
 }

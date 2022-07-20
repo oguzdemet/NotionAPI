@@ -1,0 +1,18 @@
+{
+    "filter": {
+        "or" : [
+            {
+            "property": "Project Manager",
+            "people": {
+                "contains": "9071bdf4-f37a-44de-9284-7e46a97df116"
+                }
+            },
+            {
+            "property": "Team",
+            "people": {
+                "contains": "9071bdf4-f37a-44de-9284-7e46a97df116"
+                }
+            }
+        ]
+    }
+}
