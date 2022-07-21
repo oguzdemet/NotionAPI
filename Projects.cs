@@ -1,12 +1,11 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NLog;
 using RestSharp;
 using RestSharp.Serializers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace NotionAPI
@@ -15,10 +14,10 @@ namespace NotionAPI
     {
         public static Dictionary<string, string> GetProjects(string API_Username, string Notion_Query_DataBase_EndPoint, string Notion_Token, string Notion_Projects_DataBase_ID, string Notion_Version, JObject Notion_Query_DataBase_Filter_Body)
         {
+            var logger = LogManager.GetCurrentClassLogger();
+            logger.Info("GetProjects Started {API_Username} {Notion_GetUsers_EndPoint} {Notion_Token} {Notion_Version} {Notion_Query_DataBase_Filter_Body}", API_Username, Notion_Query_DataBase_EndPoint, Notion_Token, Notion_Version, Notion_Query_DataBase_Filter_Body);
             try
             {
-                Console.WriteLine("GetProjects");
-
                 var options = new RestClientOptions(Notion_Query_DataBase_EndPoint)
                 {
                     ThrowOnAnyError = true,
@@ -67,7 +66,7 @@ namespace NotionAPI
 
                 string[] ProjectNames = JArr.Values("content").Select(x => x.ToString()).ToArray();
 
-                MessageBox.Show("Proje isimleri: " + string.Join(" : ", ProjectNames));
+                //MessageBox.Show("Proje isimleri: " + string.Join(" : ", ProjectNames));
 
                 foreach (JObject keyValuePairs in JArr)
                 {
@@ -75,13 +74,13 @@ namespace NotionAPI
                     JObject Jobj2 = JObject.Parse(JArr2[0].ToString());
 
                     dictionary.Add(Jobj2["text"]["content"].ToString(), keyValuePairs["id"].ToString());
-                    MessageBox.Show("Key: " + Jobj2["text"]["content"].ToString() + " value: " + keyValuePairs["id"]);
+                    //MessageBox.Show("Key: " + Jobj2["text"]["content"].ToString() + " value: " + keyValuePairs["id"]);
                 }
                 return dictionary;
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message);
+                logger.Error(e);
                 return new Dictionary<string, string>();
             }
         }

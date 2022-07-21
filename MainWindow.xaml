@@ -7,7 +7,7 @@
         xmlns:WpfApp3="clr-namespace:NotionAPI"
         xmlns:Items="clr-namespace:NotionAPI.Items"
         mc:Ignorable="d"
-        Title="MainWindow" Height="400" Width="800">
+        Title="NotionAPI" Height="400" Width="800" WindowStyle="SingleBorderWindow">
     <Grid>
         <ComboBox x:Name="CB_ProjectNames" SelectionChanged="CBProjectsNamesSelectionChanged" HorizontalAlignment="Left" Margin="24,61,0,0" VerticalAlignment="Top" Width="120"/>
         <ListBox x:Name="LB1" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,234,0,0" Height="150"/>

@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Globalization;
-using System.Threading;
 using Newtonsoft.Json.Linq;
 using System.Windows;
+using Microsoft.Extensions.Logging;
+using System.Runtime;
+using System.Runtime.InteropServices;
 
 namespace NotionAPI
 {
@@ -29,8 +27,8 @@ namespace NotionAPI
         public static Dictionary<string, string> Project_Dict = new();
         public static string[] Types_Array = new string[] { "Gelistirme", "ARCK-01", "CIMT-01", "Rukneddin" };
 
-        public static JObject Notion_One_Line_Json = new JObject();
-        
+        public static JObject Notion_One_Line_Json = new();
+
 
 
         public static string Replacer(string a)
@@ -45,7 +43,7 @@ namespace NotionAPI
                 ["person_id"] = Current_Person.id,
                 ["project_id"] = Current_Person.name,
                 ["start"] = DateTime.Now.ToString(TimeFormat)
-        };
+            };
 
             return outJson;
         }
@@ -58,4 +56,30 @@ namespace NotionAPI
             return outJson;
         }
     }
+    public class Runner
+    {
+        private readonly ILogger<Runner> _logger;
+
+        public Runner(ILogger<Runner> logger)
+        {
+            _logger = logger;
+        }
+
+        public void DoAction(string name)
+        {
+            _logger.LogDebug(20, "Doing hard work! {Action}", name);
+        }
+    }
+    public class InternetAvailability
+    {
+        [DllImport("wininet.dll")]
+        private extern static bool InternetGetConnectedState(out int description, int reservedValue);
+
+        public static bool IsInternetAvailable()
+        {
+            int description;
+            return InternetGetConnectedState(out description, 0);
+        }
+    }
+
 }

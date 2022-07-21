@@ -5,6 +5,11 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>4 (6).ico</ApplicationIcon>
+    <PackageIcon>4.png</PackageIcon>
+    <RepositoryUrl>https://github.com/oguzdemet/NotionAPI</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/oguzdemet/NotionAPI</PackageProjectUrl>
+    <PackageTags>API;Notion;WPF</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,14 +17,32 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" Version="0.13.1" />
-    <PackageReference Include="MySql.Data" Version="8.0.29" />
+    <Content Include="4 (6).ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\Users\demet\Downloads\4.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="5.0.1" />
     <PackageReference Include="RestSharp" Version="108.0.1" />
   </ItemGroup>
 
   <ItemGroup>
     <SplashScreen Include="Items\Loading.jpeg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="nlog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
