@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace WpfApp3
+namespace NotionAPI
 {
     public class Projects
     {
@@ -65,7 +65,7 @@ namespace WpfApp3
 
                 var dictionary = new Dictionary<string, string>();
 
-                string[] ProjectNames = JArr.Values("content").Select(x => x.ToString()).ToArray<string>();
+                string[] ProjectNames = JArr.Values("content").Select(x => x.ToString()).ToArray();
 
                 MessageBox.Show("Proje isimleri: " + string.Join(" : ", ProjectNames));
 
@@ -73,7 +73,7 @@ namespace WpfApp3
                 {
                     JArray JArr2 = JArray.Parse(keyValuePairs["properties"]["Name"]["title"].ToString());
                     JObject Jobj2 = JObject.Parse(JArr2[0].ToString());
-                    
+
                     dictionary.Add(Jobj2["text"]["content"].ToString(), keyValuePairs["id"].ToString());
                     MessageBox.Show("Key: " + Jobj2["text"]["content"].ToString() + " value: " + keyValuePairs["id"]);
                 }

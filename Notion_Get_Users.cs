@@ -8,9 +8,9 @@ using Newtonsoft.Json.Linq;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace WpfApp3
+namespace NotionAPI
 {
-    
+
     public class Person
     {
         public string id { get; set; }
@@ -59,7 +59,7 @@ namespace WpfApp3
 
             //MessageBox.Show(Jobj.ContainsKey("results").ToString());
 
-            string[] UserNames = JArr.Values("name").Select(x => x.ToString()).ToArray<string>();
+            string[] UserNames = JArr.Values("name").Select(x => x.ToString()).ToArray();
             MessageBox.Show("oldi hadi: " + string.Join(":", UserNames));
             //MessageBox.Show(jsonstring);
 

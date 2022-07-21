@@ -19,9 +19,10 @@ using System.Globalization;
 using BenchmarkDotNet.Running;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using static WpfApp3.Amele;
+using static NotionAPI.INIT;
+//using static NotionAPI.Items.Loading;
 
-namespace WpfApp3
+namespace NotionAPI
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -30,6 +31,9 @@ namespace WpfApp3
     {
         public MainWindow()
         {
+            splashScreen.Show(true);
+            
+            MessageBox.Show("sa");
 
             //MessageBox.Show(string.Join(" : ", Notion_API.GetUsers().Keys));
 
@@ -47,6 +51,10 @@ namespace WpfApp3
             CB_Names.ItemsSource = Names_Dict.Keys;
             
             CB_Types.ItemsSource = Types_Array;
+
+            splashScreen.Close(TimeSpan.FromSeconds(1));
+
+            
         }
 
         
@@ -72,18 +80,24 @@ namespace WpfApp3
         }
         private void Start_Click(object sender, RoutedEventArgs e)
         {
-
+            CB_ProjectNames.IsEnabled = false;
+            CB_Types.IsEnabled = false;
+            Notion_One_Line_Json = JObject.FromObject(Notion_Json_Template("", "", ""));
+            MessageBox.Show(JsonConvert.SerializeObject(Notion_One_Line_Json));
         }
         private void Submit_Click(object sender, RoutedEventArgs e)
         {
 
+            MessageBox.Show(JsonConvert.SerializeObject(Notion_Json_End(Notion_One_Line_Json)));
+            CB_ProjectNames.IsEnabled = true;
+            CB_Types.IsEnabled = true;
         }
 
         private void CBNamesSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            
             if (e.AddedItems.Count > 0)
             {
+                splashScreen.Show(true);
                 CB_Names.IsEnabled = false;
                 
                 Current_Person.name = e.AddedItems[0].ToString();
@@ -113,6 +127,7 @@ namespace WpfApp3
 
                 Project_Dict = Projects.GetProjects(API_Username, Notion_Query_DataBase_EndPoint, Notion_Token, Notion_Projects_DataBase_ID, Notion_Version, Notion_Query_DataBase_Filter_Body);
                 CB_ProjectNames.ItemsSource = Project_Dict.Keys;
+                splashScreen.Close(TimeSpan.FromSeconds(1));
             }
         }
         private void CBProjectsNamesSelectionChanged(object sender, SelectionChangedEventArgs e)
