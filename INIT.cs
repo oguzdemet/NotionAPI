@@ -10,6 +10,7 @@ namespace NotionAPI
 {
     public class INIT
     {
+# region initializeParameters
         public static Person Current_Person = new();
         public static string TimeFormat = "HH:mm:ss";
 
@@ -29,7 +30,7 @@ namespace NotionAPI
 
         public static JObject Notion_One_Line_Json = new();
 
-
+# endregion
 
         public static string Replacer(string a)
         {

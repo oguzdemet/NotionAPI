@@ -7,11 +7,7 @@ using System.Threading;
 using System.Globalization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using NLog;
-using NLog.Extensions.Logging;
 using static NotionAPI.INIT;
 //using static NotionAPI.Items.Loading;
 
@@ -26,8 +22,13 @@ namespace NotionAPI
             logger.Info("App Started");
             splashScreen.Show(false);
 
+
+
             try
             {
+
+
+
                 //Change current culture
                 CultureInfo culture;
                 culture = CultureInfo.CreateSpecificCulture("tr-TR");
@@ -36,6 +37,10 @@ namespace NotionAPI
                 Thread.CurrentThread.CurrentUICulture = culture;
 
                 logger.Info("Culture info changed {culture}", culture);
+
+
+
+
 
                 if (Names_Dict.Keys.Count == 0)
                 {
@@ -49,12 +54,12 @@ namespace NotionAPI
 
                 //Get names from the API and show on the combobox
                 CB_Names.ItemsSource = Names_Dict.Keys;
-                
+
 
                 CB_Types.ItemsSource = Types_Array;
 
-                
-                
+
+
             }
             catch (Exception e)
             {
@@ -186,6 +191,13 @@ namespace NotionAPI
             {
                 logger.Error(ex);
             }
+        }
+
+        private void Page_Click(object sender, RoutedEventArgs e)
+        {
+            var config = new ConfigView();
+            config.BeginInit();
+            config.InitializeComponent();
         }
     }
 }
