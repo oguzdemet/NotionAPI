@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace NotionAPI
 {
     /// <summary>
-    /// Interaction logic for ConfigView.xaml
+    /// Interaction logic for InputPage.xaml
     /// </summary>
-    public partial class ConfigView : Page
+    public partial class InputPage : Page
     {
-        public ConfigView()
+        public InputPage()
         {
             InitializeComponent();
         }

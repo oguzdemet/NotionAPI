@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NLog;
 using static NotionAPI.INIT;
+using System.Windows.Navigation;
 //using static NotionAPI.Items.Loading;
 
 namespace NotionAPI
@@ -22,41 +23,42 @@ namespace NotionAPI
             logger.Info("App Started");
             splashScreen.Show(false);
 
-
-
             try
             {
-
+                Asdfg a = new()
+                {
+                    i = 0
+                };
 
 
                 //Change current culture
-                CultureInfo culture;
-                culture = CultureInfo.CreateSpecificCulture("tr-TR");
+                //CultureInfo culture;
+                //culture = CultureInfo.CreateSpecificCulture("tr-TR");
 
-                Thread.CurrentThread.CurrentCulture = culture;
-                Thread.CurrentThread.CurrentUICulture = culture;
+                //Thread.CurrentThread.CurrentCulture = culture;
+                //Thread.CurrentThread.CurrentUICulture = culture;
 
-                logger.Info("Culture info changed {culture}", culture);
-
-
+                //logger.Info("Culture info changed {culture}", culture);
 
 
 
+
+                /*
                 if (Names_Dict.Keys.Count == 0)
                 {
                     this.Close();
                     logger.Warn("Application has been closed due to users not being initialized.");
                 }
-
+                */
                 InitializeComponent();
 
                 logger.Info("Component initialized");
 
                 //Get names from the API and show on the combobox
-                CB_Names.ItemsSource = Names_Dict.Keys;
+                //CB_Names.ItemsSource = Names_Dict.Keys;
 
 
-                CB_Types.ItemsSource = Types_Array;
+                //CB_Types.ItemsSource = Types_Array;
 
 
 
@@ -72,6 +74,7 @@ namespace NotionAPI
         }
 
         //Input name handling
+        /*
         private void Onay_Click(object sender, RoutedEventArgs e)
         {
             var logger = LogManager.GetCurrentClassLogger();
@@ -192,12 +195,19 @@ namespace NotionAPI
                 logger.Error(ex);
             }
         }
-
-        private void Page_Click(object sender, RoutedEventArgs e)
+        */
+        private void Main_Page_Click(object sender, RoutedEventArgs e)
         {
-            var config = new ConfigView();
-            config.BeginInit();
-            config.InitializeComponent();
+            //Main.NavigationService.Navigate(new InputPage());
+            Main.NavigationService.Content = new InputPage().Content;
+            Asdfg.counter = Asdfg.counter + 1;
+            MessageBox.Show(Notion_Token + " int: " + Asdfg.counter);
+        }
+        private void Config_Page_Click(object sender, RoutedEventArgs e)
+        {
+            Main.NavigationService.Navigate(new ConfigView());
+            Asdfg.counter = Asdfg.counter + 1;
+            MessageBox.Show(Notion_Token + " int: " + Asdfg.counter);
         }
     }
 }

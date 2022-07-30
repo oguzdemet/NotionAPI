@@ -1,0 +1,64 @@
+﻿<Page x:Class="NotionAPI.ConfigView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:NotionAPI"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="ConfigView"
+      Background="AliceBlue">
+
+    <Grid x:Name="ConfigViewGrid" HorizontalAlignment="Stretch">
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="20" />
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="20" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="20" />
+        </Grid.RowDefinitions>
+
+        <!-- Row 1 -->
+        <Label Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right">API Key:</Label>
+        <TextBox x:Name="TB_APIKey" Grid.Row="1" Grid.Column="2" HorizontalAlignment="Left"></TextBox>
+
+        <!-- Row 2 -->
+        <Label Grid.Row="2" Grid.Column="1" HorizontalAlignment="Right">Notion API Version:</Label>
+        <TextBox x:Name="TB_NotionAPIVersion" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Left">TB_NotionAPIVersion</TextBox>
+        
+        <!-- Row 3 -->
+        <Label Grid.Row="3" Grid.Column="1" HorizontalAlignment="Right">Notion Projects Database URL:</Label>
+        <TextBox x:Name="TB_ProjectsDBURL" Grid.Row="3" Grid.Column="2" HorizontalAlignment="Left">TB_ProjectsDBURL</TextBox>
+
+        <!-- Row 4 -->
+        <Label Grid.Row="4" Grid.Column="1" HorizontalAlignment="Right">Notion Projects Database URL:</Label>
+        <TextBox x:Name="TB_DailyNotesDBURL" Grid.Row="4" Grid.Column="2" HorizontalAlignment="Left">TB_DailyNotesDBURL</TextBox>
+
+        <!-- Row 5 -->
+        <Button x:Name="ApllyConfigChanges" Grid.Row="5" Grid.Column="3" Click="Config_Apply_Click">Apply</Button>
+
+        <!-- Row 6 -->
+
+
+        <!-- Row 7 -->
+
+
+        <!-- Row 8 -->
+        
+    </Grid>
+</Page>
