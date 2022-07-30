@@ -25,12 +25,6 @@ namespace NotionAPI
 
             try
             {
-                Asdfg a = new()
-                {
-                    i = 0
-                };
-
-
                 //Change current culture
                 //CultureInfo culture;
                 //culture = CultureInfo.CreateSpecificCulture("tr-TR");
@@ -200,14 +194,10 @@ namespace NotionAPI
         {
             //Main.NavigationService.Navigate(new InputPage());
             Main.NavigationService.Content = new InputPage().Content;
-            Asdfg.counter = Asdfg.counter + 1;
-            MessageBox.Show(Notion_Token + " int: " + Asdfg.counter);
         }
         private void Config_Page_Click(object sender, RoutedEventArgs e)
         {
             Main.NavigationService.Navigate(new ConfigView());
-            Asdfg.counter = Asdfg.counter + 1;
-            MessageBox.Show(Notion_Token + " int: " + Asdfg.counter);
         }
     }
 }

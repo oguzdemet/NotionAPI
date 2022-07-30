@@ -33,7 +33,7 @@ namespace NotionAPI
             
             InitializeComponent();
             
-            TB_APIKey.Text = testo;
+            TB_APIKey.Text = Notion_Token;
             TB_NotionAPIVersion.Text = Notion_Version;
             TB_ProjectsDBURL.Text = $"https://www.notion.so/" + Notion_Projects_DataBase_ID;
             TB_DailyNotesDBURL.Text = $"https://www.notion.so/" + Notion_DailyNotes_Database_ID;
@@ -44,20 +44,22 @@ namespace NotionAPI
             MessageBoxResult Config_Apply = MessageBox.Show("Are you sure to change the config settings?", "Config Settings Change", MessageBoxButton.OKCancel, MessageBoxImage.Question);
             if (Config_Apply == MessageBoxResult.OK)
             {
-                testo = TB_APIKey.Text;
+                
+                Notion_Token = TB_APIKey.Text;
                 Notion_Version = TB_NotionAPIVersion.Text;
+                
                 RegexMatch = Regex.Match(TB_ProjectsDBURL.Text.Trim().ToLowerInvariant(), Notion_Get_ID_Regex_Pattern);
                 if (!string.IsNullOrEmpty(RegexMatch.Value))
                 {
+                    MessageBox.Show("projects regex match: " + RegexMatch.Value);
                     Notion_Projects_DataBase_ID = RegexMatch.Groups["ID"].Value;
                 }
                 RegexMatch = Regex.Match(TB_DailyNotesDBURL.Text.Trim().ToLowerInvariant(), Notion_Get_ID_Regex_Pattern);
                 if (!string.IsNullOrEmpty(RegexMatch.Value))
                 {
-                    Notion_DailyNotes_Database_ID = "değişşşş";
-                    
+                    Notion_DailyNotes_Database_ID = RegexMatch.Groups["ID"].Value;
+                    MessageBox.Show("daily regex match: " + RegexMatch.Value);
                 }
-                
             }
         }
     }

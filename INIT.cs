@@ -10,7 +10,7 @@ using System.Runtime.CompilerServices;
 
 namespace NotionAPI
 {
-    public class DemoCustomer : INotifyPropertyChanged
+    public class NotifyClass : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
         public void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
@@ -21,48 +21,88 @@ namespace NotionAPI
             }
         }
     }
-    class Asdfg
-    {
-        public int i = 0;
-        public static int counter = 0;
-
-    }
     public class INIT
     {
-# region initializeParameters
+        #region initializeParameters
+        public static NotifyClass notifyClass = new NotifyClass();
         public static Person Current_Person = new();
         public static string TimeFormat = "HH:mm:ss";
 
         public static SplashScreen splashScreen = new SplashScreen("Items/Loading.jpeg");
 
         //API Request Standard variables
-        //public static string Notion_Token = $"Bearer secret_fUOlP7ITMCklnmcgUsiif2y8hgEMzfClguJpFLVJBZk";
-        private string _notion_Token = "sadgdsag";
-        public string ajaj { get; set; }
-
-
-        private static string _testo = "1";
-        public static string testo
+        private static string _notionToken = $"Bearer secret_fUOlP7ITMCklnmcgUsiif2y8hgEMzfClguJpFLVJBZk";
+        public static string Notion_Token
         {
-            get { return _testo; }
+            get { return _notionToken; }
             set
             {
-                _testo = value;
-                DemoCustomer asdjhg = new DemoCustomer();
-                asdjhg.NotifyPropertyChanged();
-                MessageBox.Show("testo: " + testo);
+                _notionToken = value;
+                notifyClass.NotifyPropertyChanged();
             }
         }
+        private static string _notionVersion = "2022-02-22";
+        public static string Notion_Version
+        {
+            get { return _notionVersion; }
+            set
+            {
+                _notionVersion = value;
+                notifyClass.NotifyPropertyChanged();
+            }
+        }
+        private static string _notion_Projects_Database_ID = $"3f0c889474e441ffab5de0711decb44f";
+        public static string Notion_Projects_DataBase_ID
+        {
+            get { return _notion_Projects_Database_ID; }
+            set
+            {
+                _notion_Projects_Database_ID = value;
+                notifyClass.NotifyPropertyChanged();
+            }
+        }
+        private static string _notion_Query_DataBase_EndPoint = @"https://api.notion.com/v1/databases/{id}/query";
+        public static string Notion_Query_DataBase_EndPoint
+        {
+            get { return _notion_Query_DataBase_EndPoint; }
+            set
+            {
+                _notion_Query_DataBase_EndPoint = value;
+                notifyClass.NotifyPropertyChanged();
+            }
+        }
+        private static string _notion_GetUsers_EndPoint = $"https://api.notion.com/v1/users";
+        public static string Notion_GetUsers_EndPoint
+        {
+            get { return _notion_GetUsers_EndPoint; }
+            set
+            {
+                _notion_GetUsers_EndPoint = value;
+                notifyClass.NotifyPropertyChanged();
+            }
+        }
+        private static string _api_Username = "API_Test";
+        public static string API_Username
+        {
+            get { return _api_Username; }
+            set
+            {
+                _api_Username = value;
+                notifyClass.NotifyPropertyChanged();
+            }
+        }
+        private static string _notion_DailyNotes_Database_ID = "";
+        public static string Notion_DailyNotes_Database_ID
+        {
+            get { return _notion_DailyNotes_Database_ID; }
+            set
+            {
+                _notion_DailyNotes_Database_ID = value;
+                notifyClass.NotifyPropertyChanged();
+            }
+        }
+        public static string Notion_Get_ID_Regex_Pattern = @"(notion[.]so[/])?(?<ID>[\w]{32})([?]v[=])?$";
 
-
-        public static string Notion_Token = "asdf";
-        public static string Notion_Version = "2022-02-22";
-        public static string Notion_Projects_DataBase_ID = $"3f0c889474e441ffab5de0711decb44f";
-        public static string Notion_Query_DataBase_EndPoint = @"https://api.notion.com/v1/databases/{id}/query";
-        public static string Notion_GetUsers_EndPoint = $"https://api.notion.com/v1/users";
-        public static string API_Username = "API_Test";
-        public static string Notion_DailyNotes_Database_ID = "";
-        public static string Notion_Get_ID_Regex_Pattern = @"notion[.]so[/](?<ID>[\w]+)[?]v[=]";
 
         //public static Dictionary<string, string> Names_Dict = Notion_API.GetUsers(API_Username, Notion_GetUsers_EndPoint, Notion_Token, Notion_Version);
         public static Dictionary<string, string> Project_Dict = new();
@@ -120,19 +160,6 @@ namespace NotionAPI
         {
             int description;
             return InternetGetConnectedState(out description, 0);
-        }
-    }
-
-    public class INITVariables
-    {
-        private string _asd;
-        public string Asd
-        {
-            get { return _asd; }
-            set
-            {
-                _asd = value;
-            }
         }
     }
 }
