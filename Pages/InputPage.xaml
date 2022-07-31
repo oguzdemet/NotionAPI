@@ -8,9 +8,48 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="InputPage" Background="AliceBlue">
 
-    <Grid>
-        <Label Content="şakjsfşkasdjg" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontSize="40"/>
-        <TextBlock x:Name="a" Text="asdf" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="40"/>
-        <TextBox x:Name="b" Margin="0,50,0,0" Text="sdsglmjmsşdlgj"/>
+    <Grid x:Name="ConfigViewGrid" HorizontalAlignment="Stretch">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="20" />
+            <ColumnDefinition Width="120" />
+            <ColumnDefinition Width="120" />
+            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="20" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="20" />
+        </Grid.RowDefinitions>
+
+        <!-- Row 1 -->
+        <Label Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center">Project Names</Label>
+        <Label Grid.Row="1" Grid.Column="2" HorizontalAlignment="Center">Types</Label>
+        <Label Grid.Row="1" Grid.Column="3" HorizontalAlignment="Center">Notes</Label>
+
+        <!-- Row 2 -->
+        <ComboBox x:Name="CB_ProjectNames" Grid.Row="2" Grid.Column="1" SelectionChanged="CBProjectsNamesSelectionChanged" HorizontalAlignment="Stretch"/>
+        <ComboBox x:Name="CB_Types" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Stretch"/>
+        <TextBox x:Name="TB_Notes" Grid.Row="2" Grid.Column="3" Grid.RowSpan="5" HorizontalAlignment="Stretch">Daily Notes</TextBox>
+
+
+
+
+
+
+        <!-- Row 9 -->
+        <Button x:Name="BT_Start" Grid.Row="9" Grid.Column="1" HorizontalAlignment="Center" Click="Start_Click" Width="80">Start</Button>
+        <Button x:Name="BT_Submit" Grid.Row="9" Grid.Column="2" HorizontalAlignment="Center" Click="Submit_Click" Width="80">Submit</Button>
+
     </Grid>
 </Page>
