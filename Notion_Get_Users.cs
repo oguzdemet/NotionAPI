@@ -9,17 +9,11 @@ using NLog;
 
 namespace NotionAPI
 {
-
-    public class Person
-    {
-        public string id { get; set; }
-        public string name { get; set; }
-    }
     public class Notion_API
     {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
         public static Dictionary<string, string> GetUsers(string API_Username, string Notion_GetUsers_EndPoint, string Notion_Token, string Notion_Version)
         {
-            var logger = LogManager.GetCurrentClassLogger();
             logger.Info("GetUsers Started {API_Username} {Notion_GetUsers_EndPoint} {Notion_Token} {Notion_Version}", API_Username, Notion_GetUsers_EndPoint, Notion_Token, Notion_Version);
             try
             {

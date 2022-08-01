@@ -8,18 +8,21 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="InputPage" Background="AliceBlue">
 
-    <Grid x:Name="ConfigViewGrid" HorizontalAlignment="Stretch">
+    <Grid x:Name="InputPageGrid" HorizontalAlignment="Stretch">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20" />
             <ColumnDefinition Width="120" />
             <ColumnDefinition Width="120" />
-            <ColumnDefinition Width="200" />
-            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="120" />
+            <ColumnDefinition Width="120" />
+            <ColumnDefinition Width="120" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="20" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="20" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
             <RowDefinition Height="25" />
             <RowDefinition Height="25" />
             <RowDefinition Height="25" />
@@ -33,23 +36,33 @@
         </Grid.RowDefinitions>
 
         <!-- Row 1 -->
-        <Label Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center">Project Names</Label>
-        <Label Grid.Row="1" Grid.Column="2" HorizontalAlignment="Center">Types</Label>
-        <Label Grid.Row="1" Grid.Column="3" HorizontalAlignment="Center">Notes</Label>
+        <Label Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center">Project Name</Label>
+        <Label Grid.Row="1" Grid.Column="2" HorizontalAlignment="Center">Person</Label>
+        <Label Grid.Row="1" Grid.Column="3" HorizontalAlignment="Center">Property</Label>
+        <Label Grid.Row="1" Grid.Column="4" HorizontalAlignment="Center">Task</Label>
+        <Label Grid.Row="1" Grid.Column="5" HorizontalAlignment="Center">Location</Label>
+        <Label Grid.Row="1" Grid.Column="6" HorizontalAlignment="Center">Billable</Label>
 
         <!-- Row 2 -->
         <ComboBox x:Name="CB_ProjectNames" Grid.Row="2" Grid.Column="1" SelectionChanged="CBProjectsNamesSelectionChanged" HorizontalAlignment="Stretch"/>
-        <ComboBox x:Name="CB_Types" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Stretch"/>
-        <TextBox x:Name="TB_Notes" Grid.Row="2" Grid.Column="3" Grid.RowSpan="5" HorizontalAlignment="Stretch">Daily Notes</TextBox>
+        <ComboBox x:Name="CB_Person" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Stretch"/>
+        <ComboBox x:Name="CB_Property" Grid.Row="2" Grid.Column="3" HorizontalAlignment="Stretch"/>
+        <ComboBox x:Name="CB_Task" Grid.Row="2" Grid.Column="4" HorizontalAlignment="Stretch"/>
+        <ComboBox x:Name="CB_Location" Grid.Row="2" Grid.Column="5" HorizontalAlignment="Stretch"/>
+        <CheckBox x:Name="CHB_Billable" Grid.Row="2" Grid.Column="6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+        <!-- Row 4 -->
+        <Label Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Center">Title</Label>
+        <Label Grid.Row="4" Grid.Column="4" Grid.ColumnSpan="3" HorizontalAlignment="Center">Notes</Label>
 
 
+        <!-- Row 5 -->
+        <TextBox x:Name="TB_Title" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" Grid.RowSpan="1" HorizontalAlignment="Stretch" TextWrapping="Wrap" AcceptsReturn="True">Title</TextBox>
+        <TextBox x:Name="TB_Notes" Grid.Row="5" Grid.Column="4" Grid.ColumnSpan="3" Grid.RowSpan="3" HorizontalAlignment="Stretch" TextWrapping="Wrap" AcceptsReturn="True">Daily Notes</TextBox>
 
-
-
-
-        <!-- Row 9 -->
-        <Button x:Name="BT_Start" Grid.Row="9" Grid.Column="1" HorizontalAlignment="Center" Click="Start_Click" Width="80">Start</Button>
-        <Button x:Name="BT_Submit" Grid.Row="9" Grid.Column="2" HorizontalAlignment="Center" Click="Submit_Click" Width="80">Submit</Button>
+        <!-- Row 11 -->
+        <Button x:Name="BT_Start" Grid.Row="11" Grid.Column="1" HorizontalAlignment="Center" Click="Start_Click" Width="80">Start</Button>
+        <Button x:Name="BT_Submit" Grid.Row="11" Grid.Column="2" HorizontalAlignment="Center" Click="Submit_Click" Width="80">Submit</Button>
 
     </Grid>
 </Page>
