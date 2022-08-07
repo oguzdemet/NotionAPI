@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NLog;
 using static NotionAPI.INIT;
+using static NotionAPI.Config;
 using System.Collections.Generic;
 
 namespace NotionAPI
@@ -17,9 +18,35 @@ namespace NotionAPI
             logger.Info("Initializing Input Page");
             InitializeComponent();
 
+            //Get user list via querying Users DB
+            Notion_Database_ID = Users_DB_ID;
+            API_Requests.Notion_Query_DataBase("People");
+            Notion_Users_Dictionary = Notion_Query_DataBase_Dictionary;
             CB_Person.ItemsSource = Notion_Users_Dictionary.Keys;
+
+            //Get Projects list via querying Projects DB
+            Notion_Database_ID = Projects_DB_ID;
+            API_Requests.Notion_Query_DataBase("Text");
+            Notion_Projects_Dictionary = Notion_Query_DataBase_Dictionary;
             CB_ProjectNames.ItemsSource = Notion_Projects_Dictionary.Keys;
-            //CB_Task.ItemsSource = Notion_Tasks_Dictionary.Keys;
+
+            //Get properties from get database(dailynotes)
+            Notion_Database_ID = Dailynotes_DB_ID;
+            Notion_GetDataBase_JsonPath = Notion_Get_Properties_JsonPath;
+            API_Requests.Notion_Get_Database();
+            Notion_Properties_Dictionary = Notion_Database_Dictionary;
+            CB_Property.ItemsSource = Notion_Properties_Dictionary.Keys;
+
+            //Get properties from get database(dailynotes)
+            Notion_Database_ID = Dailynotes_DB_ID;
+            Notion_GetDataBase_JsonPath = Notion_Get_Locations_JsonPath;
+            API_Requests.Notion_Get_Database();
+            Notion_Locations_Dictionary = Notion_Database_Dictionary;
+            CB_Location.ItemsSource = Notion_Locations_Dictionary.Keys;
+
+
+
+
         }
         private List<DailyNotesLine> DailyNotesLines()
         {
@@ -63,6 +90,21 @@ namespace NotionAPI
             {
                 CB_ProjectNames.IsEnabled = false;
                 CB_Property.IsEnabled = false;
+                CB_Location.IsEnabled = false;
+                CB_Person.IsEnabled = false;
+                CB_Task.IsEnabled = false;
+                Notion_Create_Page_Body = JsonConvert.SerializeObject(Notion_Create_Page_Json(
+                 Dailynotes_DB_ID,
+                 TB_Title.Text,
+                 TB_Notes.Text,
+                 new string[] { CB_Person.Text },
+                 DateTime.Now,
+                 CB_Property.Text,
+                 CB_Location.Text,
+                 (bool)CHB_Billable.IsChecked,
+                 Notion_Tasks_Dictionary[CB_Task.Text])
+                );
+
                 /*
 
                 Notion_One_Line_Json = JObject.FromObject(Notion_Json_Template("", "", ""));
@@ -142,11 +184,11 @@ namespace NotionAPI
         private void CBProjectsNamesSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var logger = LogManager.GetCurrentClassLogger();
-            logger.Info("CBNamesSelectionChanged");
+            logger.Info("CBProjectNamesSelectionChanged");
             try
             {
                 // GET TASKS FILTERED
-                Notion_Database_ID = Notion_Tasks_DataBase_ID;
+                Notion_Database_ID = Tasks_DB_ID;
                 Notion_Query_DataBase_Filter_Body = JsonConvert.SerializeObject(new JObject
                 {
                     ["filter"] = new JObject
@@ -158,7 +200,7 @@ namespace NotionAPI
                         }
                     }
                 });
-                API_Requests.Notion_Query_DataBase();
+                API_Requests.Notion_Query_DataBase("Text");
                 Notion_Tasks_Dictionary = Notion_Query_DataBase_Dictionary;
                 logger.Info("Notion_Tasks_Dictionary has been changed", string.Join(", ", Notion_Tasks_Dictionary.Keys));
                 CB_Task.ItemsSource = Notion_Tasks_Dictionary.Keys;

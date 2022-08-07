@@ -7,12 +7,12 @@
         xmlns:WpfApp3="clr-namespace:NotionAPI"
         xmlns:Items="clr-namespace:NotionAPI.Items"
         mc:Ignorable="d"
-        Title="NotionAPI" Height="400" Width="800" WindowStyle="SingleBorderWindow">
+        Title="NotionAPI" Height="450" Width="800" WindowStyle="SingleBorderWindow">
     <Grid>
         <StackPanel Orientation="Horizontal" Height="35" VerticalAlignment="Top">
             <Button x:Name="MainPageButton" Content="Main Page" Click="Main_Page_Click"/>
             <Button x:Name="ConfigPageButton" Content="Config Page" Click="Config_Page_Click"/>
         </StackPanel>
-            <Frame x:Name="Main" Margin="0,35,0,0" NavigationUIVisibility="Hidden"/>
+        <Frame x:Name="Main" Margin="0,35,0,0" NavigationUIVisibility="Hidden"/>
     </Grid>
 </Window>

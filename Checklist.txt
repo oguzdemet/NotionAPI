@@ -1,0 +1,11 @@
+﻿Yapilacaklar:
+1) Çoklu user seçimi
+2) Not kısmını submit tuşuna basarken de değiştirebilir olsun.
+3) -IMPORTANT- Dinamik olarak sayfada değişen propertylere uyum sağlama
+4) -DependentImportant- Propertilerin hangilerinin ekranda gösterileceğini configden seçebilme.
+5) -FLAW- Dictionarylerin hepsi key:name, value:id şeklinde ayarlandı.
+	Bu durum developera kolaylık sağlasa da ileride %90 hata alma olasılığı olan bir şey.
+	Burada ya dönüşüm yapılacak ya da bir handling geliştirilecek.
+6) Aylık exceller oluşturulacak.
+7) İlk baş müşteri seçtir ondan sonra proje
+8) Butonlarla ilerle

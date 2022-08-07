@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 using System.Text.RegularExpressions;
 using static NotionAPI.INIT;
+using static NotionAPI.Config;
 using NLog;
 using System;
 using System.Runtime.Caching;
@@ -16,8 +17,8 @@ namespace NotionAPI
     /// <summary>
     /// Interaction logic for ConfigView.xaml
     /// </summary>
-    
 
+    
 
 
     public partial class ConfigView : Page
@@ -27,16 +28,8 @@ namespace NotionAPI
         {
             InitializeComponent();
 
-            /*
-            TB_APIKey.Text = Notion_Token;
-            TB_NotionAPIVersion.Text = Notion_Version;
-            TB_ProjectsDBURL.Text = $"https://www.notion.so/" + Notion_Projects_DataBase_ID;
-            TB_DailyNotesDBURL.Text = $"https://www.notion.so/" + Notion_DailyNotes_Database_ID;
-            
-            
-            */
-            LBL_SuccessfullSave.Visibility = Visibility.Hidden;
-            //DG_Config.ItemsSource = DailyNotesLines();
+            //LBL_SuccessfullSave.Visibility = Visibility.Hidden;
+            TB_SetDefaultSettings.Visibility = Visibility.Hidden;
         }
 
         private List<DailyNotesLine> DailyNotesLines()
@@ -77,23 +70,42 @@ namespace NotionAPI
             MessageBoxResult Config_Apply = MessageBox.Show("Are you sure to change the config settings?", "Config Settings Change", MessageBoxButton.OKCancel, MessageBoxImage.Question);
             if (Config_Apply == MessageBoxResult.OK)
             {
-                Notion_Token = TB_APIKey.Text;
-                Notion_Version = TB_NotionAPIVersion.Text;
+                /*
+                MessageBox.Show("textbocx: " + general_Defaults.TB_Read_Token.Text);
+                Read_Token = general_Defaults.TB_Read_Token.Text;
+                MessageBox.Show("read: " + Read_Token);
+                //Read_Write_Token = general_Defaults.TB_Read_Write_Token.Text;
+                Notion_Version = general_Defaults.TB_Notion_Version.Text;
                 
-                RegexMatch = Regex.Match(TB_ProjectsDBURL.Text.Trim().ToLowerInvariant(), Notion_Get_ID_Regex_Pattern);
+                RegexMatch = Regex.Match(general_Defaults.TB_Projects_DB_ID.Text.Trim().ToLowerInvariant(), Get_DB_ID_From_URL_Regex);
                 if (!string.IsNullOrEmpty(RegexMatch.Value))
                 {
-                    Notion_Projects_DataBase_ID = RegexMatch.Groups["ID"].Value;
+                    Projects_DB_ID = RegexMatch.Groups["ID"].Value;
                 }
-                RegexMatch = Regex.Match(TB_DailyNotesDBURL.Text.Trim().ToLowerInvariant(), Notion_Get_ID_Regex_Pattern);
+                RegexMatch = Regex.Match(general_Defaults.TB_Dailynotes_DB_ID.Text.Trim().ToLowerInvariant(), Get_DB_ID_From_URL_Regex);
                 if (!string.IsNullOrEmpty(RegexMatch.Value))
                 {
-                    Notion_DailyNotes_Database_ID = RegexMatch.Groups["ID"].Value;
+                    Dailynotes_DB_ID = RegexMatch.Groups["ID"].Value;
                 }
+                */
+                MainWindow.Write_Config_File(JObjectify_Config_Variables());
+                //MainWindow.Check_Resource_Folder();
+                //LBL_SuccessfullSave.Visibility = Visibility.Visible;
             }
-            LBL_SuccessfullSave.Visibility = Visibility.Visible;
         }
-        
+        private void Set_Default_Settings(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult Config_Apply = MessageBox.Show("Are you sure to rollback to default settings?", "Config Settings Change", MessageBoxButton.OKCancel, MessageBoxImage.Question);
+            if (Config_Apply == MessageBoxResult.OK)
+            {
+                MainWindow.Write_Config_File(Default_Config);
+                MainWindow.Check_Resource_Folder();
+                ConfigFrame.NavigationService.Refresh();
+                TB_SetDefaultSettings.Visibility = Visibility.Visible;
+            }
+        }
+
+        /*
         private void button1_Click(object sender, RoutedEventArgs e)
         {
             ObjectCache cache = MemoryCache.Default;
@@ -118,6 +130,26 @@ namespace NotionAPI
             }
             TB_Cache.Text = fileContents;
         }
-        
+        */
+        private void Show_API_General_Defaults(object sender, RoutedEventArgs e)
+        {
+            ConfigFrame.NavigationService.Navigate(new Pages.API.General_Defaults());
+        }
+        private void Show_API_Personal_Defaults(object sender, RoutedEventArgs e)
+        {
+            ConfigFrame.NavigationService.Navigate(new Pages.API.Personal_Defaults());
+        }
+        private void Show_Notion_JsonPath(object sender, RoutedEventArgs e)
+        {
+            ConfigFrame.NavigationService.Navigate(new Pages.Notion.JsonPath());
+        }
+        private void Show_Notion_Workspace_URL(object sender, RoutedEventArgs e)
+        {
+            ConfigFrame.NavigationService.Navigate(new Pages.Notion.WorkspaceURLs());
+        }
+        private void Show_Parsing(object sender, RoutedEventArgs e)
+        {
+            ConfigFrame.NavigationService.Navigate(new Pages.Parsing.Parsing());
+        }
     }
 }

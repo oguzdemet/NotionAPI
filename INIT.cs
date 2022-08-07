@@ -8,6 +8,8 @@ using System.Runtime.InteropServices;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using NLog;
+using System.IO;
+using System.Reflection;
 
 namespace NotionAPI
 {
@@ -27,81 +29,12 @@ namespace NotionAPI
         public static NotifyClass notifyClass = new NotifyClass();
         
         public static string TimeFormat = "HH:mm:ss";
-
+        public static string LocalAppPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), Assembly.GetCallingAssembly().GetName().Name);
+        public static string ConfigPath = Path.Combine(LocalAppPath, "Config.json");
+        public static string CachePath = Path.Combine(LocalAppPath, "Cache.json");
         public static SplashScreen splashScreen = new SplashScreen("Items/Loading.jpeg");
 
-        //API Request Standard variables
-        private static string _notionToken = $"Bearer secret_fUOlP7ITMCklnmcgUsiif2y8hgEMzfClguJpFLVJBZk";
-        public static string Notion_Token
-        {
-            get
-            {
-                return _notionToken;
-            }
-            set
-            {
-                _notionToken = value;
-                notifyClass.NotifyPropertyChanged();
-            }
-        }
-
-        private static string _notionVersion = "2022-02-22";
-        public static string Notion_Version
-        {
-            get
-            {
-                return _notionVersion;
-            }
-            set
-            {
-                _notionVersion = value;
-                notifyClass.NotifyPropertyChanged();
-            }
-        }
-
-        private static string _notion_Projects_Database_ID = $"3f0c889474e441ffab5de0711decb44f";
-        public static string Notion_Projects_DataBase_ID
-        {
-            get
-            {
-                return _notion_Projects_Database_ID;
-            }
-            set
-            {
-                _notion_Projects_Database_ID = value;
-                notifyClass.NotifyPropertyChanged();
-            }
-        }
-
-        private static string _notion_Tasks_DataBase_ID = $"82dbeb69d0e94f81acb2be5b581a29a1";
-        public static string Notion_Tasks_DataBase_ID
-        {
-            get
-            {
-                return _notion_Tasks_DataBase_ID;
-            }
-            set
-            {
-                _notion_Tasks_DataBase_ID = value;
-                notifyClass.NotifyPropertyChanged();
-            }
-        }
-        
-
-        private static string _notion_Query_DataBase_EndPoint = @"https://api.notion.com/v1/databases/{id}/query";
-        public static string Notion_Query_DataBase_EndPoint
-        {
-            get
-            {
-                return _notion_Query_DataBase_EndPoint;
-            }
-            set
-            {
-                _notion_Query_DataBase_EndPoint = value;
-                notifyClass.NotifyPropertyChanged();
-            }
-        }
-
+        //API Request variables
         private static string _notion_Query_DataBase_Filter_Body = string.Empty;
         public static string Notion_Query_DataBase_Filter_Body
         {
@@ -112,63 +45,21 @@ namespace NotionAPI
             set
             {
                 _notion_Query_DataBase_Filter_Body = value;
-                notifyClass.NotifyPropertyChanged();
+                notifyClass.NotifyPropertyChanged(nameof(Notion_Query_DataBase_Filter_Body));
             }
         }
 
-        private static string _notion_GetUsers_EndPoint = $"https://api.notion.com/v1/users";
-        public static string Notion_GetUsers_EndPoint
+        private static string _notion_Create_Page_Body = string.Empty;
+        public static string Notion_Create_Page_Body
         {
             get
             {
-                return _notion_GetUsers_EndPoint;
+                return _notion_Create_Page_Body;
             }
             set
             {
-                _notion_GetUsers_EndPoint = value;
-                notifyClass.NotifyPropertyChanged();
-            }
-        }
-
-        private static string _api_Username = "API_Test";
-        public static string API_Username
-        {
-            get
-            {
-                return _api_Username;
-            }
-            set
-            {
-                _api_Username = value;
-                notifyClass.NotifyPropertyChanged();
-            }
-        }
-
-        private static string _notion_DailyNotes_Database_ID = "";
-        public static string Notion_DailyNotes_Database_ID
-        {
-            get
-            {
-                return _notion_DailyNotes_Database_ID;
-            }
-            set
-            {
-                _notion_DailyNotes_Database_ID = value;
-                notifyClass.NotifyPropertyChanged();
-            }
-        }
-
-        private static string[] _project_Names = Array.Empty<string>();
-        public static string[] Project_Names
-        {
-            get
-            {
-                return _project_Names;
-            }
-            set
-            {
-                _project_Names = value;
-                notifyClass.NotifyPropertyChanged();
+                _notion_Create_Page_Body = value;
+                notifyClass.NotifyPropertyChanged(nameof(Notion_Create_Page_Body));
             }
         }
 
@@ -179,7 +70,7 @@ namespace NotionAPI
             set
             {
                 _notion_Database_ID = value;
-                notifyClass.NotifyPropertyChanged();
+                notifyClass.NotifyPropertyChanged(nameof(Notion_Database_ID));
             }
         }
 
@@ -193,7 +84,7 @@ namespace NotionAPI
             set
             {
                 notion_Users_Dictionary = value;
-                notifyClass.NotifyPropertyChanged();
+                notifyClass.NotifyPropertyChanged(nameof(Notion_Users_Dictionary));
             }
         }
 
@@ -207,11 +98,23 @@ namespace NotionAPI
             set
             {
                 notion_Query_DataBase_Dictionary = value;
-                notifyClass.NotifyPropertyChanged();
+                notifyClass.NotifyPropertyChanged(nameof(Notion_Query_DataBase_Dictionary));
             }
         }
 
-        public static string Notion_Get_ID_Regex_Pattern = @"(notion[.]so[/])?(?<ID>[\w]{32})([?]v[=])?$";
+        private static Dictionary<string, string> notion_Database_Dictionary = new();
+        public static Dictionary<string, string> Notion_Database_Dictionary
+        {
+            get
+            {
+                return notion_Database_Dictionary;
+            }
+            set
+            {
+                notion_Database_Dictionary = value;
+                notifyClass.NotifyPropertyChanged(nameof(Notion_Database_Dictionary));
+            }
+        }
 
         private static Dictionary<string, string>  notion_Projects_Dictionary = new();
         public static Dictionary<string, string> Notion_Projects_Dictionary
@@ -223,25 +126,51 @@ namespace NotionAPI
             set
             {
                 notion_Projects_Dictionary = value;
-                notifyClass.NotifyPropertyChanged();
+                notifyClass.NotifyPropertyChanged(nameof(Notion_Projects_Dictionary));
             }
         }
 
-        private static Dictionary<string, string> _ntion_Tasks_Dictionary = new();
+        private static Dictionary<string, string> _notion_Tasks_Dictionary = new();
         public static Dictionary<string, string> Notion_Tasks_Dictionary
         {
             get
             {
-                return _ntion_Tasks_Dictionary;
+                return _notion_Tasks_Dictionary;
             }
             set
             {
-                _ntion_Tasks_Dictionary = value;
-                notifyClass.NotifyPropertyChanged();
+                _notion_Tasks_Dictionary = value;
+                notifyClass.NotifyPropertyChanged(nameof(Notion_Tasks_Dictionary));
             }
         }
 
-        
+        private static Dictionary<string, string> _notion_Properties_Dictionary = new();
+        public static Dictionary<string, string> Notion_Properties_Dictionary
+        {
+            get
+            {
+                return _notion_Properties_Dictionary;
+            }
+            set
+            {
+                _notion_Properties_Dictionary = value;
+                notifyClass.NotifyPropertyChanged(nameof(Notion_Properties_Dictionary));
+            }
+        }
+
+        private static Dictionary<string, string> _notion_Locations_Dictionary = new();
+        public static Dictionary<string, string> Notion_Locations_Dictionary
+        {
+            get
+            {
+                return _notion_Locations_Dictionary;
+            }
+            set
+            {
+                _notion_Locations_Dictionary = value;
+                notifyClass.NotifyPropertyChanged(nameof(Notion_Locations_Dictionary));
+            }
+        }
 
         //public static Dictionary<string, string> Names_Dict = Notion_API.GetUsers(API_Username, Notion_GetUsers_EndPoint, Notion_Token, Notion_Version);
         //public static Dictionary<string, string> Project_Dict = new();
@@ -277,7 +206,7 @@ namespace NotionAPI
             return outJson;
         }
 
-        public static JObject Notion_Create_Page_Json(string DatabaseID, string Aciklama, string[] Gerceklestiren, DateTime DateStart, string Property, string Location, bool Billable, string Task)
+        public static JObject Notion_Create_Page_Json(string DatabaseID, string Title, string Aciklama, string[] Gerceklestiren, DateTime DateStart, string Property, string Location, bool Billable, string Task)
         {
             JArray PeopleJsonArray = new();
 
@@ -338,6 +267,16 @@ namespace NotionAPI
                     ["_Tasks"] = new JObject
                     {
                         ["relation"] = new JArray(new JObject { ["id"] = Task})
+                    },
+                    ["Name"] = new JObject
+                    {
+                        ["title"] = new JObject
+                        {
+                            ["text"] = new JObject
+                            {
+                                ["content"] = Title
+                            }
+                        }
                     }
                 }
             };
@@ -358,6 +297,9 @@ namespace NotionAPI
             };
             return outJson;
         }
+
+
+        
     }
     public class Runner
     {
@@ -401,5 +343,265 @@ namespace NotionAPI
     {
         public string id { get; set; }
         public string name { get; set; }
+    }
+
+    public class Config
+    {
+        public static NotifyClass notifyClass = new NotifyClass();
+
+        // API Request Standard variables
+        private static string _read_Token = "Bearer secret_fUOlP7ITMCklnmcgUsiif2y8hgEMzfClguJpFLVJBZk";
+        public static string Read_Token
+        {
+            get
+            {
+                return _read_Token;
+            }
+            set
+            {
+                _read_Token = value;
+                notifyClass.NotifyPropertyChanged(nameof(Read_Token));
+            }
+        }
+        private static string _read_Write_Token = "Bearer secret_fUOlP7ITMCklnmcgUsiif2y8hgEMzfClguJpFLVJBZk";
+        public static string Read_Write_Token
+        {
+            get
+            {
+                return _read_Write_Token;
+            }
+            set
+            {
+                _read_Write_Token = value;
+                notifyClass.NotifyPropertyChanged("Read_Write_Token");
+            }
+        }
+        private static string _notion_Version = "2022-02-22";
+        public static string Notion_Version
+        {
+            get
+            {
+                return _notion_Version;
+            }
+            set
+            {
+                _notion_Version = value;
+                notifyClass.NotifyPropertyChanged("Notion_Version");
+            }
+        }
+        private static string _query_DB_Endpoint = @"https://api.notion.com/v1/databases/{id}/query";
+        public static string Query_DB_Endpoint
+        {
+            get
+            {
+                return _query_DB_Endpoint;
+            }
+            set
+            {
+                _query_DB_Endpoint = value;
+                notifyClass.NotifyPropertyChanged("Query_DB_Endpoint");
+            }
+        }
+        private static string _getUsers_Endpoint = @"https://api.notion.com/v1/users";
+        public static string GetUsers_Endpoint
+        {
+            get
+            {
+                return _getUsers_Endpoint;
+            }
+            set
+            {
+                _getUsers_Endpoint = value;
+                notifyClass.NotifyPropertyChanged("GetUsers_Endpoint");
+            }
+        }
+        private static string _get_DB_Endpoint = @"https://api.notion.com/v1/databases/{id}";
+        public static string Get_DB_Endpoint
+        {
+            get
+            {
+                return _get_DB_Endpoint;
+            }
+            set
+            {
+                _get_DB_Endpoint = value;
+                notifyClass.NotifyPropertyChanged("Get_DB_Endpoint");
+            }
+        }
+        private static string _get_Page_Endpoint = @"https://api.notion.com/v1/pages/{id}";
+        public static string Get_Page_Endpoint
+        {
+            get
+            {
+                return _get_Page_Endpoint;
+            }
+            set
+            {
+                _get_Page_Endpoint = value;
+                notifyClass.NotifyPropertyChanged("Get_Page_Endpoint");
+            }
+        }
+        private static string _create_Page_Endpoint = @"https://api.notion.com/v1/pages";
+        public static string Create_Page_Endpoint
+        {
+            get
+            {
+                return _create_Page_Endpoint;
+            }
+            set
+            {
+                _create_Page_Endpoint = value;
+                notifyClass.NotifyPropertyChanged("Create_Page_Endpoint");
+            }
+        }
+        private static string _update_Page_Endpoint = @"https://api.notion.com/v1/pages/{id}";
+        public static string Update_Page_Endpoint
+        {
+            get
+            {
+                return _update_Page_Endpoint;
+            }
+            set
+            {
+                _update_Page_Endpoint = value;
+                notifyClass.NotifyPropertyChanged("Update_Page_Endpoint");
+            }
+        }
+        private static string _projects_DB_ID = "3f0c889474e441ffab5de0711decb44f";
+        public static string Projects_DB_ID
+        {
+            get
+            {
+                return _projects_DB_ID;
+            }
+            set
+            {
+                _projects_DB_ID = value;
+                notifyClass.NotifyPropertyChanged(nameof(Projects_DB_ID));
+            }
+        }
+        private static string _tasks_DB_ID = "82dbeb69d0e94f81acb2be5b581a29a1";
+        public static string Tasks_DB_ID
+        {
+            get
+            {
+                return _tasks_DB_ID;
+            }
+            set
+            {
+                _tasks_DB_ID = value;
+                notifyClass.NotifyPropertyChanged("Tasks_DB_ID");
+            }
+        }
+        private static string _dailynotes_DB_ID = "f95c4d839b0045d0aed7d113f77da93b";
+        public static string Dailynotes_DB_ID
+        {
+            get
+            {
+                return _dailynotes_DB_ID;
+            }
+            set
+            {
+                _dailynotes_DB_ID = value;
+                notifyClass.NotifyPropertyChanged("Dailynotes_DB_ID");
+            }
+        }
+        private static string _users_DB_ID = "f75294e49e0c46d38eaaaeb5d231c83d";
+        public static string Users_DB_ID
+        {
+            get
+            {
+                return _users_DB_ID;
+            }
+            set
+            {
+                _users_DB_ID = value;
+                notifyClass.NotifyPropertyChanged(nameof(Users_DB_ID));
+            }
+        }
+        private static string _get_DB_ID_From_URL_Regex = @"(notion[.]so[/])?(?<ID>[\w]{32})([?]v[=])?$";
+        public static string Get_DB_ID_From_URL_Regex
+        {
+            get
+            {
+                return _get_DB_ID_From_URL_Regex;
+            }
+            set
+            {
+                _get_DB_ID_From_URL_Regex = value;
+                notifyClass.NotifyPropertyChanged("Get_DB_ID_From_URL_Regex");
+            }
+        }
+
+        // Alttaki ID değiştirilecek (Property'nin ID'sini al öyle değiştir)
+        private static string _notion_Get_Properties_JsonPath = "$['properties']..[?(@.id=='QTaj')].['select'].['options'].[*]";
+        public static string Notion_Get_Properties_JsonPath
+        {
+            get
+            {
+                return _notion_Get_Properties_JsonPath;
+            }
+            set
+            {
+                _notion_Get_Properties_JsonPath = value;
+                notifyClass.NotifyPropertyChanged(nameof(Notion_Get_Properties_JsonPath));
+            }
+        }
+
+        private static string _notion_Get_Locations_JsonPath = "$['properties']..[?(@.id=='y%7Dbx')].['select'].['options'].[*]";
+        public static string Notion_Get_Locations_JsonPath
+        {
+            get
+            {
+                return _notion_Get_Locations_JsonPath;
+            }
+            set
+            {
+                _notion_Get_Locations_JsonPath = value;
+                notifyClass.NotifyPropertyChanged(nameof(Notion_Get_Properties_JsonPath));
+            }
+        }
+
+        private static string _notion_GetDataBase_JsonPath = string.Empty;
+        public static string Notion_GetDataBase_JsonPath
+        {
+            get
+            {
+                return _notion_GetDataBase_JsonPath;
+            }
+            set
+            {
+                _notion_GetDataBase_JsonPath = value;
+                notifyClass.NotifyPropertyChanged(nameof(Notion_GetDataBase_JsonPath));
+            }
+        }
+
+        public static JObject Default_Config;
+
+        public static JObject JObjectify_Config_Variables()
+        {
+            JObject WriteJ = new()
+            {
+                [nameof(Read_Token)] = Read_Token,
+                [nameof(Read_Write_Token)] = Read_Write_Token,
+                [nameof(Notion_Version)] = Notion_Version,
+                [nameof(Query_DB_Endpoint)] = Query_DB_Endpoint,
+                [nameof(GetUsers_Endpoint)] = GetUsers_Endpoint,
+                [nameof(Get_DB_Endpoint)] = Get_DB_Endpoint,
+                [nameof(Get_Page_Endpoint)] = Get_Page_Endpoint,
+                [nameof(Create_Page_Endpoint)] = Create_Page_Endpoint,
+                [nameof(Update_Page_Endpoint)] = Update_Page_Endpoint,
+                [nameof(Projects_DB_ID)] = Projects_DB_ID,
+                [nameof(Tasks_DB_ID)] = Tasks_DB_ID,
+                [nameof(Dailynotes_DB_ID)] = Dailynotes_DB_ID,
+                [nameof(Users_DB_ID)] = Users_DB_ID,
+                [nameof(Get_DB_ID_From_URL_Regex)] = Get_DB_ID_From_URL_Regex,
+                [nameof(Notion_Get_Properties_JsonPath)] = Notion_Get_Properties_JsonPath,
+                [nameof(Notion_Get_Locations_JsonPath)] = Notion_Get_Locations_JsonPath,
+                [nameof(Notion_GetDataBase_JsonPath)] = Notion_GetDataBase_JsonPath
+            };
+            MessageBox.Show(WriteJ.ToString());
+            return WriteJ;
+        }
     }
 }

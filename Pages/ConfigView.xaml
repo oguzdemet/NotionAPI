@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:NotionAPI"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="450" d:DesignWidth="750"
       Title="ConfigView"
       Background="AliceBlue">
 
@@ -13,61 +13,51 @@
         
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20" />
-            <ColumnDefinition Width="auto" />
-            <ColumnDefinition Width="auto" />
-            <ColumnDefinition Width="50" />
-            <ColumnDefinition Width="auto" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="70" />
+            <ColumnDefinition Width="70" />
+            <ColumnDefinition Width="30" />
+            <ColumnDefinition Width="40" />
+            <ColumnDefinition Width="500" />
             <ColumnDefinition Width="20" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="20" />
-            <RowDefinition Height="25" />
-            <RowDefinition Height="25" />
-            <RowDefinition Height="25" />
-            <RowDefinition Height="25" />
-            <RowDefinition Height="25" />
-            <RowDefinition Height="25" />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="50" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="40" />
             <RowDefinition Height="30" />
-            <RowDefinition Height="25" />
+            <RowDefinition Height="50" />
             <RowDefinition Height="20" />
         </Grid.RowDefinitions>
 
+        <TreeView Name="ConfigTreeView" Grid.Row="1" Grid.RowSpan="3" Grid.Column="1" Grid.ColumnSpan="2">
+            <TreeViewItem Header="API" IsSelected="True">
+                <TreeViewItem Header="General Defaults" Selected="Show_API_General_Defaults"/>
+                <TreeViewItem Header="Personal Defaults" Selected="Show_API_Personal_Defaults"/>
+            </TreeViewItem>
+            <TreeViewItem Header="Notion">
+                <TreeViewItem Header="Json Path" Selected="Show_Notion_JsonPath"/>
+                <TreeViewItem Header="Workspace URL's" Selected="Show_Notion_Workspace_URL"/>
+            </TreeViewItem>
+            <TreeViewItem Header="System">
+                <TreeViewItem Header="To be added" />
+            </TreeViewItem>
+            <TreeViewItem Header="Parsing" Selected="Show_Parsing"/>
+        </TreeView>
+
         <!-- Row 1 -->
-        <Label Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right">API Key:</Label>
-        <TextBox x:Name="TB_APIKey" Grid.Row="1" Grid.Column="2" HorizontalAlignment="Left" Text="{Binding Path=(local:INIT.Notion_Token), Mode=OneWay}"></TextBox>
-
-        <!-- Row 2 -->
-        <Label Grid.Row="2" Grid.Column="1" HorizontalAlignment="Right">Notion API Version:</Label>
-        <TextBox x:Name="TB_NotionAPIVersion" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding Path=(local:INIT.Notion_Version), Mode=OneWay}"></TextBox>
-        
-        <!-- Row 3 -->
-        <Label Grid.Row="3" Grid.Column="1" HorizontalAlignment="Right">Notion Projects Database URL:</Label>
-        <TextBox x:Name="TB_ProjectsDBURL" Grid.Row="3" Grid.Column="2" HorizontalAlignment="Left" Text="{Binding Path=(local:INIT.Notion_Projects_DataBase_ID), Mode=OneWay}"></TextBox>
-
-        <!-- Row 4 -->
-        <Label Grid.Row="4" Grid.Column="1" HorizontalAlignment="Right">Notion Daily Notes Database URL:</Label>
-        <TextBox x:Name="TB_DailyNotesDBURL" Grid.Row="4" Grid.Column="2" HorizontalAlignment="Left" Text="{Binding Path=(local:INIT.Notion_DailyNotes_Database_ID), Mode=OneWay}"></TextBox>
-
-        <!-- Row 5 -->
-
-        <Button x:Name="BT_Reload" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Stretch" Click="button1_Click">Reload</Button>
-        <TextBox x:Name="TB_Cache" Grid.Row="5" Grid.Column="2" HorizontalAlignment="Stretch" TextWrapping="Wrap">TB_Cache</TextBox>
-
-        <!-- Row 6 -->
-
+        <Frame x:Name="ConfigFrame" Grid.Row="0" Grid.Column="5" Grid.RowSpan="9" NavigationUIVisibility="Hidden"/>
 
         <!-- Row 7 -->
-
-
+        <TextBlock Grid.Row="7" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" TextWrapping="Wrap">Recover settings from default?</TextBlock>
         <!-- Row 8 -->
+        <Button x:Name="BT_SetDefaultSettings" Grid.Row="8" Grid.Column="1" HorizontalAlignment="Stretch" Click="Set_Default_Settings">Default</Button>
+        <TextBlock x:Name="TB_SetDefaultSettings"  Grid.Row="8" Grid.Column="2" Grid.ColumnSpan="3" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap">Settings recovered from default.</TextBlock>
 
-        <!-- Row 9 -->
-        <Label x:Name="LBL_SuccessfullSave" Grid.Row="8" Grid.Column="2" HorizontalAlignment="Right">Settings changes saved.</Label>
-        <Button x:Name="ApllyConfigChanges" Grid.Row="9" Grid.Column="3" Click="Config_Apply_Click">Apply</Button>
-        <DataGrid x:Name="DG_Config" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="7"/>
-
-
+        <!--Label x:Name="LBL_SuccessfullSave" Grid.Row="8" Grid.Column="2" Grid.ColumnSpan="3" HorizontalAlignment="Center" VerticalAlignment="Stretch">Settings changes saved.</Label-->
+        <!--Button x:Name="ApllyConfigChanges" Grid.Row="8" Grid.Column="1" Click="Config_Apply_Click">Apply</Button-->
     </Grid>
 </Page>

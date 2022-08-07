@@ -1,5 +1,0 @@
-﻿Yapilacaklar:
-1) Çoklu user seçimi
-2) Not kısmını submit tuşuna basarken de değiştirebilir olsun.
-3) -IMPORTANT- Dinamik olarak sayfada değişen propertylere uyum sağlama
-4) -DependentImportant- Propertilerin hangilerinin ekranda gösterileceğini configden seçebilme.

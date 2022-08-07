@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using static NotionAPI.INIT;
+using static NotionAPI.Config;
 
 namespace NotionAPI
 {
@@ -37,26 +38,35 @@ namespace NotionAPI
                 {
                     case "GetUsers":
                         request.AddHeader("Notion-Version", Notion_Version);
-                        request.AddHeader("Authorization", Notion_Token);
+                        request.AddHeader("Authorization", Read_Token);
+                        logger.Info("GetUsers.");
                         break;
                     case "GetPage":
+                        logger.Info("GetPage.");
                         break;
                     case "GetDatabase":
+                        request.AddUrlSegment("id", Notion_Database_ID);
+                        request.AddHeader("Notion-Version", Notion_Version);
+                        request.AddHeader("Authorization", Read_Token);
+                        logger.Info("GetDatabase.");
                         break;
                     case "QueryDatabase":
                         logger.Info("{Notion_Database_ID}", Notion_Database_ID);
 
                         request.AddUrlSegment("id", Notion_Database_ID);
                         request.AddHeader("Notion-Version", Notion_Version);
-                        request.AddHeader("Authorization", Notion_Token);
+                        request.AddHeader("Authorization", Read_Token);
                         if (!string.IsNullOrEmpty(Notion_Query_DataBase_Filter_Body))
                         {
                             request.AddStringBody(Notion_Query_DataBase_Filter_Body, RestSharp.DataFormat.Json);
                         }
-
-                        logger.Info("Request adjusted to query database.{Notion_Database_ID} {Notion_Query_DataBase_Filter_Body} {End_Point}", Notion_Database_ID, Notion_Query_DataBase_Filter_Body, End_Point);
+                        logger.Info("Request adjusted to query database.", Notion_Database_ID, Notion_Query_DataBase_Filter_Body, End_Point);
                         break;
                     case "CreatePage":
+                        request.AddHeader("Notion-Version", Notion_Version);
+                        request.AddHeader("Authorization", Read_Write_Token);
+                        request.AddStringBody(Notion_Create_Page_Body, RestSharp.DataFormat.Json);
+                        logger.Info("CreatePage.");
                         break;
                     case "Search":
                         break;
@@ -72,6 +82,8 @@ namespace NotionAPI
             }
             finally
             {
+                Notion_Query_DataBase_Filter_Body = string.Empty;
+                Notion_Create_Page_Body = string.Empty;
                 MessageBoxResult MsgResult = new();
                 while (!InternetAvailability.IsInternetAvailable() && MsgResult != MessageBoxResult.Cancel)
                 {
@@ -91,6 +103,7 @@ namespace NotionAPI
 
         public static Dictionary<string, string> Notion_Parse_Response(string Request_Type, RestResponse Response)
         {
+            logger.Info("Notion_Parse_Response void started.", Request_Type);
             Dictionary<string, string> Result = new();
             try
             {
@@ -104,27 +117,33 @@ namespace NotionAPI
                 }
 
                 logger.Info("Response: " + "\n" + Response.Content);
+                logger.Info("", Response.ResponseStatus);
 
                 JObject Jobj = JObject.Parse(Response.Content);
+                logger.Info("Response parsed to JObject.");
 
                 switch (Request_Type)
                 {
                     case "GetUsers":
                         Result = JsonConvert.DeserializeObject<IEnumerable<Person>>(Jobj["results"].ToString()).
                                  Select(p => (Name: p.name, Record: p.id)).
-                                 Where(x => x.Name != API_Username).
+                                 Where(x => x.Name != string.Empty).
                                  ToDictionary(t => t.Name, t => t.Record);
                         break;
 
                     case "GetPage":
+                        
                         break;
 
                     case "GetDatabase":
+                        foreach (JObject keyValuePairs in Jobj.SelectTokens(Notion_GetDataBase_JsonPath))
+                        {
+                            Result.Add(keyValuePairs["name"].ToString(), keyValuePairs["id"].ToString());
+                        }
                         break;
 
-                    case "QueryDatabase":
+                    case "QueryDatabase_Text":
                         JArray JArr = JArray.Parse(Jobj["results"].ToString());
-                        Project_Names = JArr.Values("content").Select(x => x.ToString()).ToArray();
 
                         foreach (JObject keyValuePairs in JArr)
                         {
@@ -133,6 +152,31 @@ namespace NotionAPI
                             Result.Add(keyValuePairs.SelectToken("$['properties'].*.['title'].[0].['text'].['content']").ToString(), keyValuePairs["id"].ToString());
                         }
                         break;
+
+                    case "QueryDatabase_Properties":
+                        JArray JArr2 = JArray.Parse(Jobj["results"].ToString());
+                        //Project_Names = JArr2.Values("content").Select(x => x.ToString()).ToArray();
+                        JArray jArray2 = JArray.Parse(JsonConvert.SerializeObject(JArr2.SelectTokens("$['properties']..[?(@.id=='QTaj')].['select'].['options'].[*]")));
+                        foreach (JObject keyValuePairs in jArray2)
+                        {
+                            //Result.Add(keyValuePairs["properties"]["Name"]["title"][0]["text"]["content"].ToString(), keyValuePairs["id"].ToString());
+                            //MessageBox.Show("key adding: " + keyValuePairs.SelectToken("$['properties'].*.['title'].[0].['text'].['content']").ToString());
+                            Result.Add(keyValuePairs["name"].ToString(), keyValuePairs["id"].ToString());
+                        }
+                        break;
+
+                    case "QueryDatabase_People":
+                        
+                        JArray JArr3 = JArray.Parse(JsonConvert.SerializeObject(Jobj.SelectTokens("$['results']..['properties']")));
+                        foreach (JObject keyValuePairs in JArr3)
+                        {
+                            JObject key1 = JObject.Parse(JsonConvert.SerializeObject(keyValuePairs.SelectToken("$..['title'].[*]")));
+                            JObject value1 = JObject.Parse(JsonConvert.SerializeObject(keyValuePairs.SelectToken("$..['people'].[*]")));
+
+                            Result.Add(key1["text"]["content"].ToString(), value1["id"].ToString());
+                        }
+                        break;
+                        
 
                     case "CreatePage":
                         break;
@@ -151,29 +195,34 @@ namespace NotionAPI
                 logger.Error(e);
                 return new Dictionary<string, string>();
             }
+            finally
+            {
+                Rest_Response = new RestResponse();
+            }
         }
 
-        public static void Notion_Query_DataBase()
+        public static void Notion_Query_DataBase(string type)
         {
             logger.Info("Notion_Query_Database void started.");
-            bool ok = Notion_Api_Base("QueryDatabase", Notion_Query_DataBase_EndPoint);
+            bool ok = Notion_Api_Base("QueryDatabase", Query_DB_Endpoint);
             if (ok)
             {
                 logger.Info("Making API request...");
                 Rest_Response = restClient.Post(request);
-                Notion_Query_DataBase_Dictionary = Notion_Parse_Response("QueryDatabase", Rest_Response);
-                logger.Info("Projects dictionary has been set. {Notion_Query_DataBase_Dictionary}", string.Join(", ", Notion_Query_DataBase_Dictionary.Keys));
+                Notion_Database_ID = string.Empty;
+                Notion_Query_DataBase_Dictionary = Notion_Parse_Response("QueryDatabase_" + type, Rest_Response);
+                logger.Info("Queried dictionary has been set. {Notion_Query_DataBase_Dictionary}", string.Join(", ", Notion_Query_DataBase_Dictionary.Keys));
             }
             else
             {
-                logger.Warn("Projects dictionary cannot set due to request is not ok.");
+                logger.Warn("Queried dictionary cannot set due to request is not ok.");
             }
         }
 
         public static void Notion_Get_Users()
         {
             logger.Info("Notion_Get_Users void started.");
-            bool ok = Notion_Api_Base("GetUsers", Notion_GetUsers_EndPoint);
+            bool ok = Notion_Api_Base("GetUsers", GetUsers_Endpoint);
             if (ok)
             {
                 logger.Info("Making API request...");
@@ -188,6 +237,56 @@ namespace NotionAPI
             }
         }
 
+        public static void Notion_Get_Database()
+        {
+            logger.Info("Notion_Get_Database void started.");
+            bool ok = Notion_Api_Base("GetDatabase", Get_DB_Endpoint);
+            if (ok)
+            {
+                try
+                {
+                    logger.Info("Making API request...");
+                    Rest_Response = restClient.Get(request);
+                    Notion_Database_Dictionary = Notion_Parse_Response("GetDatabase", Rest_Response);
+                    logger.Info("Database property dictionary has been set.");
+                }
+                catch (Exception e)
+                {
+                    logger.Error(e.Source + Environment.NewLine + e.Source);
+                }
+            }
+            else
+            {
+                logger.Warn("Databse property dictionary cannot set due to request is not ok.");
+                MessageBox.Show("Cannot obtain users. Please restart the application.");
+            }
+        }
+
+        public static void Notion_Create_Page()
+        {
+            logger.Info("Notion_Create_Page void started.");
+            bool ok = Notion_Api_Base("CreatePage", Create_Page_Endpoint);
+            if (ok)
+            {
+                try
+                {
+                    logger.Info("Making API request...");
+                    Rest_Response = restClient.Get(request);
+                    // Gelen response u parse edip Page ID'yi kaydet.
+                    Notion_Database_Dictionary = Notion_Parse_Response("GetDatabase", Rest_Response);
+                    logger.Info("Database property dictionary has been set.");
+                }
+                catch (Exception e)
+                {
+                    logger.Error(e.Source + Environment.NewLine + e.Source);
+                }
+            }
+            else
+            {
+                logger.Warn("Databse property dictionary cannot set due to request is not ok.");
+                MessageBox.Show("Cannot obtain users. Please restart the application.");
+            }
+        }
 
         public static Dictionary<string, string> GetProjects(string API_Username, string Notion_Query_DataBase_EndPoint, string Notion_Token, string Notion_Projects_DataBase_ID, string Notion_Version, JObject Notion_Query_DataBase_Filter_Body)
         {            
