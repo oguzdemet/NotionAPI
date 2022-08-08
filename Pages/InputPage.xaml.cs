@@ -97,13 +97,15 @@ namespace NotionAPI
                  Dailynotes_DB_ID,
                  TB_Title.Text,
                  TB_Notes.Text,
-                 new string[] { CB_Person.Text },
+                 new string[] { Notion_Users_Dictionary[CB_Person.Text] },
                  DateTime.Now,
                  CB_Property.Text,
                  CB_Location.Text,
                  (bool)CHB_Billable.IsChecked,
                  Notion_Tasks_Dictionary[CB_Task.Text])
                 );
+
+                API_Requests.Notion_Create_Page();
 
                 /*
 
@@ -123,9 +125,21 @@ namespace NotionAPI
             logger.Info("Submit_Click");
             try
             {
-                MessageBox.Show(JsonConvert.SerializeObject(Notion_Json_End(Notion_One_Line_Json)));
+                Notion_Update_Page_Body = JsonConvert.SerializeObject(Notion_Update_Page_Json(DateTime.Now));
+                API_Requests.Notion_Update_Page(Notion_Created_Pages_Dictionary[Generated_Create_Page_ID.ToString()]);
                 CB_ProjectNames.IsEnabled = true;
+                CB_ProjectNames.SelectedIndex = -1;
                 CB_Property.IsEnabled = true;
+                CB_Property.SelectedIndex = -1;
+                CB_Location.IsEnabled = true;
+                CB_Location.SelectedIndex = -1;
+                CB_Person.IsEnabled = true;
+                CB_Person.SelectedIndex = -1;
+                CB_Task.IsEnabled = true;
+                CB_Task.SelectedIndex = -1;
+                TB_Notes.Text = string.Empty;
+                TB_Title.Text = string.Empty;
+                CHB_Billable.IsChecked = false;
             }
             catch (Exception ex)
             {
@@ -188,22 +202,25 @@ namespace NotionAPI
             try
             {
                 // GET TASKS FILTERED
-                Notion_Database_ID = Tasks_DB_ID;
-                Notion_Query_DataBase_Filter_Body = JsonConvert.SerializeObject(new JObject
+                if (CB_ProjectNames.SelectedItem != null)
                 {
-                    ["filter"] = new JObject
+                    Notion_Database_ID = Tasks_DB_ID;
+                    Notion_Query_DataBase_Filter_Body = JsonConvert.SerializeObject(new JObject
                     {
-                        ["property"] = "PROJECTS",
-                        ["relation"] = new JObject
+                        ["filter"] = new JObject
                         {
-                            ["contains"] = Notion_Projects_Dictionary[CB_ProjectNames.SelectedValue.ToString()]
+                            ["property"] = Notion_DailyNotes_Projects_ID,
+                            ["relation"] = new JObject
+                            {
+                                ["contains"] = Notion_Projects_Dictionary[CB_ProjectNames.SelectedValue.ToString()]
+                            }
                         }
-                    }
-                });
-                API_Requests.Notion_Query_DataBase("Text");
-                Notion_Tasks_Dictionary = Notion_Query_DataBase_Dictionary;
-                logger.Info("Notion_Tasks_Dictionary has been changed", string.Join(", ", Notion_Tasks_Dictionary.Keys));
-                CB_Task.ItemsSource = Notion_Tasks_Dictionary.Keys;
+                    });
+                    API_Requests.Notion_Query_DataBase("Text");
+                    Notion_Tasks_Dictionary = Notion_Query_DataBase_Dictionary;
+                    logger.Info("Notion_Tasks_Dictionary has been changed", string.Join(", ", Notion_Tasks_Dictionary.Keys));
+                    CB_Task.ItemsSource = Notion_Tasks_Dictionary.Keys;
+                }
             }
             catch (Exception ex)
             {

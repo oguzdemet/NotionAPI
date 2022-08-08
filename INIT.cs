@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 using System.Windows;
 using Microsoft.Extensions.Logging;
 using System.Runtime;
@@ -63,6 +64,20 @@ namespace NotionAPI
             }
         }
 
+        private static string _notion_Update_Page_Body = string.Empty;
+        public static string Notion_Update_Page_Body
+        {
+            get
+            {
+                return _notion_Update_Page_Body;
+            }
+            set
+            {
+                _notion_Update_Page_Body = value;
+                notifyClass.NotifyPropertyChanged(nameof(Notion_Update_Page_Body));
+            }
+        }
+
         private static string _notion_Database_ID = string.Empty;
         public static string Notion_Database_ID
         {
@@ -71,6 +86,17 @@ namespace NotionAPI
             {
                 _notion_Database_ID = value;
                 notifyClass.NotifyPropertyChanged(nameof(Notion_Database_ID));
+            }
+        }
+
+        private static string _notion_Update_Page_ID = string.Empty;
+        public static string Notion_Update_Page_ID
+        {
+            get { return _notion_Update_Page_ID; }
+            set
+            {
+                _notion_Update_Page_ID = value;
+                notifyClass.NotifyPropertyChanged(nameof(Notion_Update_Page_ID));
             }
         }
 
@@ -172,6 +198,31 @@ namespace NotionAPI
             }
         }
 
+        private static Dictionary<string, string> _notion_Created_Pages_Dictionary = new();
+        public static Dictionary<string, string> Notion_Created_Pages_Dictionary
+        {
+            get
+            {
+                return _notion_Created_Pages_Dictionary;
+            }
+            set
+            {
+                _notion_Created_Pages_Dictionary = value;
+                notifyClass.NotifyPropertyChanged(nameof(Notion_Created_Pages_Dictionary));
+            }
+        }
+
+        private static int _generated_Create_Page_ID = 0;
+        public static int Generated_Create_Page_ID
+        {
+            get { return _generated_Create_Page_ID; }
+            set
+            {
+                _generated_Create_Page_ID = value;
+                notifyClass.NotifyPropertyChanged(nameof(_generated_Create_Page_ID));
+            }
+        }
+
         //public static Dictionary<string, string> Names_Dict = Notion_API.GetUsers(API_Username, Notion_GetUsers_EndPoint, Notion_Token, Notion_Version);
         //public static Dictionary<string, string> Project_Dict = new();
 
@@ -224,21 +275,25 @@ namespace NotionAPI
                 },
                 ["properties"] = new JObject
                 {
-                    ["Aciklama"] = new JObject
+                    // Aciklama
+                    [Config.Notion_DailyNotes_Aciklama_ID] = new JObject
                     {
-                        ["rich_text"] = new JObject
-                        {
-                            ["text"] = new JObject
+                        ["rich_text"] = new JArray(
+                            new JObject
                             {
-                                ["content"] = Aciklama
-                            }
-                        }
+                                ["text"] = new JObject
+                                {
+                                    ["content"] = Aciklama
+                                }
+                            })
                     },
-                    ["Gerceklestiren"] = new JObject
+                    // Gerceklestiren
+                    [Config.Notion_DailyNotes_Gerceklestiren_ID] = new JObject
                     {
                         ["people"] = PeopleJsonArray
                     },
-                    ["Date"] = new JObject
+                    // Date
+                    [Config.Notion_DailyNotes_Date_ID] = new JObject
                     {
                         ["date"] = new JObject
                         {
@@ -246,59 +301,70 @@ namespace NotionAPI
                             ["end"] = DateStart
                         }
                     },
-                    ["Property"] = new JObject
+                    // Property
+                    [Config.Notion_DailyNotes_Property_ID] = new JObject
                     {
                         ["select"] = new JObject
                         {
                             ["name"] = Property
                         }
                     },
-                    ["Location"] = new JObject
+                    // Location
+                    [Config.Notion_DailyNotes_Location_ID] = new JObject
                     {
                         ["select"] = new JObject
                         {
                             ["name"] = Location
                         }
-                    }
-                    ["Billable"] = new JObject
+                    },
+                    // Billable
+                    [Config.Notion_DailyNotes_Billable_ID] = new JObject
                     {
                         ["checkbox"] = Billable
                     },
-                    ["_Tasks"] = new JObject
+                    // Tasks
+                    [Config.Notion_DailyNotes_Tasks_ID] = new JObject
                     {
                         ["relation"] = new JArray(new JObject { ["id"] = Task})
                     },
-                    ["Name"] = new JObject
+                    // Name
+                    ["title"] = new JObject
                     {
-                        ["title"] = new JObject
-                        {
-                            ["text"] = new JObject
+                        ["title"] = new JArray(
+                            new JObject
                             {
-                                ["content"] = Title
-                            }
-                        }
+                                ["text"] = new JObject
+                                {
+                                    ["content"] = Title
+                                }
+                            })
                     }
                 }
             };
+            logger.Info("Notion_Create_Page_Json: " + Environment.NewLine + outJson);
             return outJson;
         }
 
         public static JObject Notion_Update_Page_Json(DateTime DateEnd)
         {
+            JObject start = (JObject)JsonConvert.DeserializeObject(Notion_Create_Page_Body);
             JObject outJson = new()
             {
-                ["Date"] = new JObject
+                ["properties"] = new JObject
                 {
-                    ["date"] = new JObject
+                    [Config.Notion_DailyNotes_Date_ID] = new JObject
                     {
-                        ["end"] = DateEnd
+                        ["date"] = new JObject
+                        {
+                            ["start"] = start["properties"][Config.Notion_DailyNotes_Date_ID]["date"]["start"],
+                            ["end"] = DateEnd
+                        }
                     }
                 }
             };
+            logger.Info("Notion_Update_Page_Json: " + Environment.NewLine + outJson);
             return outJson;
         }
-
-
         
     }
     public class Runner
@@ -533,8 +599,119 @@ namespace NotionAPI
             }
         }
 
-        // Alttaki ID değiştirilecek (Property'nin ID'sini al öyle değiştir)
-        private static string _notion_Get_Properties_JsonPath = "$['properties']..[?(@.id=='QTaj')].['select'].['options'].[*]";
+        private static string _notion_DailyNotes_Aciklama_ID = "Lh%7Bs";
+        public static string Notion_DailyNotes_Aciklama_ID
+        {
+            get
+            {
+                return _notion_DailyNotes_Aciklama_ID;
+            }
+            set
+            {
+                _notion_DailyNotes_Aciklama_ID = value;
+                notifyClass.NotifyPropertyChanged(nameof(Notion_DailyNotes_Aciklama_ID));
+            }
+        }
+
+        private static string _notion_DailyNotes_Gerceklestiren_ID = "%3BOG%3D";
+        public static string Notion_DailyNotes_Gerceklestiren_ID
+        {
+            get
+            {
+                return _notion_DailyNotes_Gerceklestiren_ID;
+            }
+            set
+            {
+                _notion_DailyNotes_Gerceklestiren_ID = value;
+                notifyClass.NotifyPropertyChanged(nameof(Notion_DailyNotes_Gerceklestiren_ID));
+            }
+        }
+
+        private static string _notion_DailyNotes_Date_ID = "vPY%5E";
+        public static string Notion_DailyNotes_Date_ID
+        {
+            get
+            {
+                return _notion_DailyNotes_Date_ID;
+            }
+            set
+            {
+                _notion_DailyNotes_Date_ID = value;
+                notifyClass.NotifyPropertyChanged(nameof(Notion_DailyNotes_Date_ID));
+            }
+        }
+
+        private static string _notion_DailyNotes_Property_ID = "QTaj";
+        public static string Notion_DailyNotes_Property_ID
+        {
+            get
+            {
+                return _notion_DailyNotes_Property_ID;
+            }
+            set
+            {
+                _notion_DailyNotes_Property_ID = value;
+                notifyClass.NotifyPropertyChanged(nameof(Notion_DailyNotes_Property_ID));
+            }
+        }
+
+        private static string _notion_DailyNotes_Location_ID = "y%7Dbx";
+        public static string Notion_DailyNotes_Location_ID
+        {
+            get
+            {
+                return _notion_DailyNotes_Location_ID;
+            }
+            set
+            {
+                _notion_DailyNotes_Location_ID = value;
+                notifyClass.NotifyPropertyChanged(nameof(Notion_DailyNotes_Location_ID));
+            }
+        }
+
+        private static string _notion_DailyNotes_Billable_ID = "wxTI";
+        public static string Notion_DailyNotes_Billable_ID
+        {
+            get
+            {
+                return _notion_DailyNotes_Billable_ID;
+            }
+            set
+            {
+                _notion_DailyNotes_Billable_ID = value;
+                notifyClass.NotifyPropertyChanged(nameof(Notion_DailyNotes_Billable_ID));
+            }
+        }
+
+        private static string _notion_DailyNotes_Tasks_ID = "%3BeGX";
+        public static string Notion_DailyNotes_Tasks_ID
+        {
+            get
+            {
+                return _notion_DailyNotes_Tasks_ID;
+            }
+            set
+            {
+                _notion_DailyNotes_Tasks_ID = value;
+                notifyClass.NotifyPropertyChanged(nameof(Notion_DailyNotes_Tasks_ID));
+            }
+        }
+
+        private static string _notion_DailyNotes_Projects_ID = "gX_c";
+        public static string Notion_DailyNotes_Projects_ID
+        {
+            get
+            {
+                return _notion_DailyNotes_Projects_ID;
+            }
+            set
+            {
+                _notion_DailyNotes_Projects_ID = value;
+                notifyClass.NotifyPropertyChanged(nameof(Notion_DailyNotes_Projects_ID));
+            }
+        }
+
+        private static string _notion_Get_Properties_JsonPath = "$['properties']..[?(@.id=='" + Notion_DailyNotes_Property_ID + "')].['select'].['options'].[*]";
         public static string Notion_Get_Properties_JsonPath
         {
             get
@@ -548,7 +725,7 @@ namespace NotionAPI
             }
         }
 
-        private static string _notion_Get_Locations_JsonPath = "$['properties']..[?(@.id=='y%7Dbx')].['select'].['options'].[*]";
+        private static string _notion_Get_Locations_JsonPath = "$['properties']..[?(@.id=='" + Notion_DailyNotes_Location_ID + "')].['select'].['options'].[*]";
         public static string Notion_Get_Locations_JsonPath
         {
             get

@@ -9,6 +9,7 @@ using System.Linq;
 using System.Windows;
 using static NotionAPI.INIT;
 using static NotionAPI.Config;
+using System.Threading.Tasks;
 
 namespace NotionAPI
 {
@@ -68,6 +69,13 @@ namespace NotionAPI
                         request.AddStringBody(Notion_Create_Page_Body, RestSharp.DataFormat.Json);
                         logger.Info("CreatePage.");
                         break;
+                    case "UpdatePage":
+                        request.AddUrlSegment("id", Notion_Update_Page_ID);
+                        request.AddHeader("Notion-Version", Notion_Version);
+                        request.AddHeader("Authorization", Read_Write_Token);
+                        request.AddStringBody(Notion_Update_Page_Body, RestSharp.DataFormat.Json);
+                        logger.Info("UpdatePage.");
+                        break;
                     case "Search":
                         break;
                     default:
@@ -83,7 +91,8 @@ namespace NotionAPI
             finally
             {
                 Notion_Query_DataBase_Filter_Body = string.Empty;
-                Notion_Create_Page_Body = string.Empty;
+                //Notion_Create_Page_Body = string.Empty;
+                Notion_Update_Page_Body = string.Empty;
                 MessageBoxResult MsgResult = new();
                 while (!InternetAvailability.IsInternetAvailable() && MsgResult != MessageBoxResult.Cancel)
                 {
@@ -107,17 +116,15 @@ namespace NotionAPI
             Dictionary<string, string> Result = new();
             try
             {
+                logger.Info("Response: " + "\n" + Response.Content);
                 if (!Response.IsSuccessful)
                 {
                     throw new Exception("Request unsuccesfull!");
                 }
                 else if (string.IsNullOrEmpty(Response.Content))
                 {
-                    throw new Exception("Response body is null!");
+                    throw new ArgumentNullException("Response body is null!");
                 }
-
-                logger.Info("Response: " + "\n" + Response.Content);
-                logger.Info("", Response.ResponseStatus);
 
                 JObject Jobj = JObject.Parse(Response.Content);
                 logger.Info("Response parsed to JObject.");
@@ -176,9 +183,10 @@ namespace NotionAPI
                             Result.Add(key1["text"]["content"].ToString(), value1["id"].ToString());
                         }
                         break;
-                        
 
                     case "CreatePage":
+                        Generated_Create_Page_ID++;
+                        Notion_Created_Pages_Dictionary.Add(Generated_Create_Page_ID.ToString(), Jobj["id"].ToString().Replace("-", string.Empty));
                         break;
 
                     case "Search":
@@ -190,9 +198,20 @@ namespace NotionAPI
 
                 return Result;
             }
+            catch (ArgumentNullException e)
+            {
+                logger.Error(e);
+                return new Dictionary<string, string>();
+            }
             catch (Exception e)
             {
                 logger.Error(e);
+                JObject Jobj = JObject.Parse(Response.Content);
+                if (Jobj.ContainsKey("message"))
+                {
+                    logger.Error(Jobj["message"]);
+                    MessageBox.Show(Jobj["message"].ToString());
+                }
                 return new Dictionary<string, string>();
             }
             finally
@@ -252,7 +271,7 @@ namespace NotionAPI
                 }
                 catch (Exception e)
                 {
-                    logger.Error(e.Source + Environment.NewLine + e.Source);
+                    logger.Error(e);
                 }
             }
             else
@@ -271,14 +290,40 @@ namespace NotionAPI
                 try
                 {
                     logger.Info("Making API request...");
-                    Rest_Response = restClient.Get(request);
+                    Rest_Response = restClient.Post(request);
+                    logger.Info("Staatus: " + Rest_Response.ResponseStatus.ToString());
                     // Gelen response u parse edip Page ID'yi kaydet.
-                    Notion_Database_Dictionary = Notion_Parse_Response("GetDatabase", Rest_Response);
-                    logger.Info("Database property dictionary has been set.");
+                    Notion_Parse_Response("CreatePage", Rest_Response);
+                    logger.Info("Notion_Created_Pages_Dictionary has been set.");
                 }
                 catch (Exception e)
                 {
-                    logger.Error(e.Source + Environment.NewLine + e.Source);
+                    logger.Error(e);
+                }
+            }
+            else
+            {
+                logger.Warn("Databse property dictionary cannot set due to request is not ok.");
+                MessageBox.Show("Cannot obtain users. Please restart the application.");
+            }
+        }
+        public static void Notion_Update_Page(string PageID)
+        {
+            logger.Info("Notion_Update_Page void started. {PageID}", PageID);
+            Notion_Update_Page_ID = PageID;
+            bool ok = Notion_Api_Base("UpdatePage", Update_Page_Endpoint);
+            if (ok)
+            {
+                try
+                {
+                    logger.Info("Making API request...");
+                    Rest_Response = restClient.Patch(request);
+                    //Notion_Parse_Response("UpdatePage", Rest_Response);
+                    logger.Info(PageID + " ID'ed page has been updated.");
+                }
+                catch (Exception e)
+                {
+                    logger.Error(e);
                 }
             }
             else
